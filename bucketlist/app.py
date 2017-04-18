@@ -1,5 +1,12 @@
-from flask import Flask
-app = Flask(__name__)
+import flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = flask.Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bucketlist.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+from bucketlist.models import Result
 
 
 @app.route('/')
