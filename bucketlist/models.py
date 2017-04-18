@@ -1,5 +1,5 @@
-from bucketlist.database import db
 from werkzeug.security import generate_password_hash
+from database import db, init_db
 
 
 class User(db.Model):
@@ -12,7 +12,7 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     bucketlists = db.relationship('BucketList')
 
-    def hide_password(self, lock):
+    def encrypt_password(self, lock):
         self.password = generate_password_hash(lock)
 
 
@@ -37,3 +37,7 @@ class ListItems(db.Model):
     date_updated = db.Column(
         db.DateTime, default=db.func.now(), onupdate=db.func.now())
     achieved = db.Column(db.Boolean, default=False)
+
+
+if __name__ == "__main__":
+    init_db()
