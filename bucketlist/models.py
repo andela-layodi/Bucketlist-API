@@ -18,8 +18,6 @@ class AddUpdateDelete():
 class User(db.Model, AddUpdateDelete):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    # first_name = db.Column(db.String(50), nullable=False)
-    # second_name = db.Column(db.String(50), nullable=False)
     user_name = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
