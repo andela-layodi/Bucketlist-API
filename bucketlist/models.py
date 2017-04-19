@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from bucketlist.app import db
+from .app import db
 
 
 class AddUpdateDelete():
@@ -18,8 +18,8 @@ class AddUpdateDelete():
 class User(db.Model, AddUpdateDelete):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(50), nullable=False)
-    second_name = db.Column(db.String(50), nullable=False)
+    # first_name = db.Column(db.String(50), nullable=False)
+    # second_name = db.Column(db.String(50), nullable=False)
     user_name = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
@@ -32,15 +32,15 @@ class User(db.Model, AddUpdateDelete):
     def verify_password(self, password):
         return check_password_hash(self.password, password)
 
-    def __init__(self, first_name, second_name, user_name, email, password):
-        self.first_name = first_name
-        self.second_name = second_name
-        self.user_name = user_name
-        self.email = email
-        self.password = self.encrypt_password(password)
-
-    def __repr__(self):
-        return '<User %r>' % self.user_name
+    # def __init__(self, first_name, second_name, user_name, email, password):
+    #     self.first_name = first_name
+    #     self.second_name = second_name
+    #     self.user_name = user_name
+    #     self.email = email
+    #     self.password = self.encrypt_password(password)
+    #
+    # def __repr__(self):
+    #     return '<User %r>' % self.user_name
 
 
 class BucketList(db.Model, AddUpdateDelete):
