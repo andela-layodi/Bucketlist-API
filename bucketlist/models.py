@@ -21,10 +21,10 @@ class BucketList(db.Model):
     __tablename__ = 'buckelists'
     id = db.Column(db.Integer, primary_key=True)
     list_name = db.Column(db.String(100), unique=True, nullable=False)
-    author = db.Column(db.String(50), db.ForeignKey('users.user_name'))
+    created_by = db.Column(db.String(50), db.ForeignKey('users.user_name'))
     list_items = db.relationship('ListItems')
     date_created = db.Column(db.DateTime, default=db.func.now())
-    date_updated = db.Column(
+    date_modified = db.Column(
         db.DateTime, default=db.func.now(), onupdate=db.func.now())
 
 
@@ -35,24 +35,9 @@ class ListItems(db.Model):
         db.String(100), db.ForeignKey('buckelists.list_name'))
     item_name = db.Column(db.String(200), unique=True, nullable=False)
     date_created = db.Column(db.DateTime, default=db.func.now())
-    date_updated = db.Column(
+    date_modified = db.Column(
         db.DateTime, default=db.func.now(), onupdate=db.func.now())
-    achieved = db.Column(db.Boolean, default=False)
-
-
-class Result(db.Model):
-    __tablename__ = 'results'
-
-    id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String())
-
-    def __init__(self, url, result_all, result_no_stop_words):
-        self.url = url
-        self.result_all = result_all
-        self.result_no_stop_words = result_no_stop_words
-
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
+    done = db.Column(db.Boolean, default=False)
 
 
 def init_db():
