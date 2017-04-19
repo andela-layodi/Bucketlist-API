@@ -6,7 +6,6 @@ from bucketlist.app import db
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bucketlist.db'
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # db = SQLAlchemy(app)
-#
 
 
 def init_db():
