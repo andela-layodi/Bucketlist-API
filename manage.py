@@ -1,7 +1,7 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
-from bucketlist.database import app, db
+from bucketlist.app import app, db
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bucketlist.db'
 
