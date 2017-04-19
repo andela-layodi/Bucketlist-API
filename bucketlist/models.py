@@ -1,5 +1,6 @@
 from werkzeug.security import generate_password_hash
-from database import db, init_db
+from bucketlist.app import db
+# from bucketlist.database import init_db
 
 
 class User(db.Model):
@@ -17,7 +18,7 @@ class User(db.Model):
 
 
 class BucketList(db.Model):
-    __tablename__ = 'buckelists'
+    __tablename__ = 'bucketlists'
     id = db.Column(db.Integer, primary_key=True)
     list_name = db.Column(db.String(100), unique=True, nullable=False)
     author = db.Column(db.String(50), db.ForeignKey('users.user_name'))
@@ -37,6 +38,27 @@ class ListItems(db.Model):
     date_updated = db.Column(
         db.DateTime, default=db.func.now(), onupdate=db.func.now())
     achieved = db.Column(db.Boolean, default=False)
+
+
+class Result(db.Model):
+    __tablename__ = 'results'
+
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String())
+
+    def __init__(self, url, result_all, result_no_stop_words):
+        self.url = url
+        self.result_all = result_all
+        self.result_no_stop_words = result_no_stop_words
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+
+def init_db():
+    """Initialize the database and create the tables as per the models."""
+    db.drop_all()
+    db.create_all()
 
 
 if __name__ == "__main__":
