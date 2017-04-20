@@ -1,31 +1,35 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
+postgres_local_base = 'postgresql://postgres:@localhost/'
+database_name = 'bucketlistdb'
 
 
-class Config(object):
+class BaseConfig:
+    """Base configuration."""
+    SECRET_KEY = os.getenv('SECRET_KEY', 'my_precious')
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = os.environ['SECRET_KEY']
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///bucketlist.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-class DevelopmentConfig(Config):
+class DevelopmentConfig(BaseConfig):
+    """Development configuration."""
     DEVELOPMENT = True
     DEBUG = True
-    SECRET_KEY = os.environ['SECRET_KEY']
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///bucketlist.db'
+    SQLALCHEMY_DATABASE_URI = postgres_local_base + database_name
 
 
-class TestingConfig(Config):
-    TESTING = True
+class TestingConfig(BaseConfig):
+    """Testing configuration."""
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-    # SECRET_KEY = os.environ['SECRET_KEY']
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = postgres_local_base + database_name + '_test'
+    PRESERVE_CONTEXT_ON_EXCEPTION = False
 
 
-config = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'default': DevelopmentConfig
-}
+class ProductionConfig(BaseConfig):
+    """Production configuration."""
+    SECRET_KEY = 'my_precious'
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = 'postgresql:///example'

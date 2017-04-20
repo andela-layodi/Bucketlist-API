@@ -4,10 +4,8 @@ from flask_restful import Resource
 from flask_login import login_required
 
 app = flask.Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bucketlist.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
+from bucketlist import db
 from .models import User, BucketList, ListItems
 
 
@@ -126,14 +124,15 @@ class BucketListEditItem(Resource):
         """
         pass
 
-# @app.route('/')
-# def hello():
-#     return "Hello World!"
-#
-#
-# @app.route('/<name>')
-# def hello_name(name):
-#     return "Hello {}!".format(name)
+
+@app.route('/')
+def hello():
+    return "Hello World!"
+
+
+@app.route('/<name>')
+def hello_name(name):
+    return "Hello {}!".format(name)
 
 
 if __name__ == '__main__':
