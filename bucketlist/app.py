@@ -8,7 +8,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bucketlist.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# from .models import User, BucketList, ListItems
+from .models import User, BucketList, ListItems
 
 
 class UserRegistration(Resource):

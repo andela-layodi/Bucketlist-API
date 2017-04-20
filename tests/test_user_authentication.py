@@ -1,10 +1,10 @@
 import unittest
 import json
-from werkzeug.security import generate_password_hash
+# from werkzeug.security import generate_password_hash
 
 from .test_base import InitialTestCase
-from ..bucketlist.models import User
-from ..bucketlist.app import db
+# from ..bucketlist.models import User
+# from ..bucketlist.app import db
 
 
 class UserAuthenticationTest(InitialTestCase):
@@ -14,10 +14,13 @@ class UserAuthenticationTest(InitialTestCase):
             'email': 'layodi@layodi.com',
             'password': 'layodi'
         }
+        data = json.dumps(new_user)
+        print (new_user)
+        print (data)
         response = self.client.post("/v1/auth/register",
                                     data=json.dumps(new_user),
                                     content_type='application/json')
-        # self.assertIn('Successfully registered to Buckety', response.data)
+        self.assertIn('Successfully registered to Buckety', new_user)
         self.assertEqual(response.status_code, 201)
 
     def test_register_user_with_no_email(self):
