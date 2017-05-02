@@ -3,8 +3,8 @@ import json
 # from werkzeug.security import generate_password_hash
 
 from .test_base import InitialTestCase
-# from ..bucketlist.models import User
-# from ..bucketlist.app import db
+from ..bucketlist.models import User
+from ..bucketlist import db
 
 
 class UserAuthenticationTest(InitialTestCase):
@@ -98,6 +98,29 @@ class UserAuthenticationTest(InitialTestCase):
     def test_user_logout(self):
         response = self.client.post('/v1/auth/logout')
         self.assertEqual(response.status_code, 204)
+
+    def test_generate_auth_token(self):
+        user = User(
+            username='Layodi',
+            email='layodi@layodi.com',
+            password='locked123'
+        )
+        db.session.add(user)
+        db.session.commit()
+        auth_token = user.generate_auth_token(user.id)
+        self.assertTrue(isinstance(auth_token, bytes))
+
+    def test_verify_auth_token(self):
+        user = User(
+            username='Layodi',
+            email='layodi@layodi.com',
+            password='locked123'
+        )
+        db.session.add(user)
+        db.session.commit()
+        auth_token = user.generate_auth_token(user.id)
+        self.assertTrue(isinstance(auth_token, bytes))
+        self.assertTrue(user.verify_auth_token(auth_token) == 1)
 
 
 if __name__ == '__main__':

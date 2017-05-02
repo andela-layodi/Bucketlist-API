@@ -3,7 +3,7 @@ import unittest
 from flask_testing import TestCase
 from ..bucketlist.config import TestingConfig
 
-from ..bucketlist.app import app, db
+from ..bucketlist import app, db
 
 
 class InitialTestCase(TestCase):

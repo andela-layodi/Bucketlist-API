@@ -2,7 +2,7 @@ import os
 import unittest
 import coverage
 
-from flask_script import Manager
+from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
 
@@ -16,12 +16,20 @@ COV = coverage.coverage(
 )
 COV.start()
 
-from bucketlist import app, db, models
+from bucketlist import app, db
+from bucketlist.models import User
 
 migrate = Migrate(app, db)
 
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
+
+
+def make_shell_context():
+    return dict(app=app, db=db, User=User)
+
+
+manager.add_command('shell', Shell(make_context=make_shell_context))
 
 
 @manager.command

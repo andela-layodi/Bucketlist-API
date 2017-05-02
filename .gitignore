@@ -105,3 +105,6 @@ secret_key.txt
 
 # migrations
 migrations/
+
+# coverage report
+cover/
