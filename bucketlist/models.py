@@ -11,7 +11,6 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
-    email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     bucketlists = db.relationship('BucketList', backref='user', lazy='dynamic')
 
@@ -45,7 +44,8 @@ class User(db.Model):
         except Exception as e:
             return e
 
-    def verify_auth_token(self, auth_token):
+    @staticmethod
+    def verify_auth_token(auth_token):
         """
         Verifies the auth token
         """
@@ -57,9 +57,8 @@ class User(db.Model):
         except jwt.InvalidTokenError:
             return 'Invalid token. Please log in again.'
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, password):
         self.username = username
-        self.email = email
         self.password = password
 
     def __repr__(self):
@@ -77,11 +76,9 @@ class BucketList(db.Model):
     date_modified = db.Column(
         db.DateTime, default=db.func.now(), onupdate=db.func.now(), nullable=False)
 
-    def __init__(self, list_name, created_by, date_created, date_modified):
+    def __init__(self, list_name, created_by):
         self.list_name = list_name
         self.created_by = created_by
-        self.date_created = datetime.datetime.now
-        self.date_modified = datetime.datetime.now
 
     def to_json(self):
         return {
@@ -101,8 +98,7 @@ class ListItems(db.Model):
     __tablename__ = 'bucketlistitems'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    list_title = db.Column(
-        db.String(255), db.ForeignKey('bucketlists.list_name'))
+    list_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'))
     item_name = db.Column(db.String(255), unique=True, nullable=False)
     date_created = db.Column(db.DateTime, default=db.func.now())
     date_modified = db.Column(
@@ -110,12 +106,9 @@ class ListItems(db.Model):
     done = db.Column(db.Boolean, nullable=False, default=False)
 
     def __init__(
-            self, list_title, item_name, date_created, date_modified, done=False):
-        self.list_title = list_title
+            self, list_id, item_name):
+        self.list_id = list_id
         self.item_name = item_name
-        self.date_created = datetime.datetime.now
-        self.date_modified = datetime.datetime.now
-        self.done = done
 
     def to_json(self):
         return {
