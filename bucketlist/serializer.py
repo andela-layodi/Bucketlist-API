@@ -1,6 +1,5 @@
 """
-    This file defines the serializing method to
-    be used by the marshal function.
+    This file identifies the serilization format.
 """
 
 from flask_restful import fields

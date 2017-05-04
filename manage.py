@@ -1,26 +1,11 @@
-import os
-import unittest
-import coverage
-
-from flask_script import Manager, Shell
-from flask_migrate import Migrate, MigrateCommand
 from flask_login import LoginManager
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager, Shell
 
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from bucketlist.config import DevelopmentConfig
-from flask_restful import Api
-from bucketlist.app import UserRegistration, UserLogIn, UserLogOut, BucketListNew, BucketListAddItem, BucketListSingle, BucketListEditItem
-# from bucketlist import app, db, api
+from bucketlist import app, db, api
+from bucketlist.bucketlist_resources import BucketListNew, BucketListAddItem, BucketListSingle, BucketListEditItem
 from bucketlist.models import User
-
-app = Flask(__name__)
-
-app.config.from_object(DevelopmentConfig)
-
-api = Api(app)
-
-db = SQLAlchemy(app)
+from bucketlist.user_authentication import UserRegistration, UserLogIn, UserLogOut
 
 migrate = Migrate(app, db)
 
@@ -51,13 +36,17 @@ def drop_db():
 
 
 # endpoints
-api.add_resource(UserRegistration, '/auth/register', endpoint="user_registration")
+api.add_resource(
+    UserRegistration, '/auth/register', endpoint="user_registration")
 api.add_resource(UserLogIn, '/auth/login', endpoint="login")
 api.add_resource(UserLogOut, '/auth/logout', endpoint="logout")
-api.add_resource(BucketListNew, '/api/v1/bucketlists/', endpoint="newbucketlist")
+api.add_resource(
+    BucketListNew, '/api/v1/bucketlists/', endpoint="newbucketlist")
 api.add_resource(BucketListAddItem, '/api/v1/bucketlists/<list_id>/items/',
-                 endpoint='bucketlistitems')
-api.add_resource(BucketListSingle, '/api/v1/bucketlists/<list_id>/', endpoint='single_bucketlist')
+                 endpoint='add_bucketlistitems')
+api.add_resource(
+    BucketListSingle, '/api/v1/bucketlists/<list_id>/',
+    endpoint='single_bucketlist')
 api.add_resource(
     BucketListEditItem, '/api/v1/bucketlists/<list_id>/items/<item_id>/',
     endpoint='update_item')

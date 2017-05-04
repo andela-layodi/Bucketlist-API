@@ -1,9 +1,8 @@
-import os
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from .config import DevelopmentConfig
 from flask_restful import Api
+
+from .config import DevelopmentConfig
 
 app = Flask(__name__)
 
