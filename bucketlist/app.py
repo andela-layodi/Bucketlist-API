@@ -1,11 +1,16 @@
+import json
+
 from flask import g
 from flask_httpauth import HTTPTokenAuth
-from flask_restful import reqparse, Resource
+# marshal - Takes raw data (in the form of a dict, list, object) and a
+# dict of fields to output and filters the data based on those fields.
+from flask_restful import reqparse, Resource, marshal
 from flask_login import logout_user
 from sqlalchemy.orm.exc import NoResultFound
 
 from . import db
 from .models import User, BucketList, ListItems
+from .serializer import bucketlists
 
 auth = HTTPTokenAuth()
 
@@ -13,15 +18,14 @@ auth = HTTPTokenAuth()
 @auth.verify_token
 def verify_token(token):
     """To validate the token sent by the user."""
-    print(token)
     user = User.verify_auth_token(token)
-    print("user: {}".format(user))
     if not user:
         return False
     g.user = user
     return True
 
 
+# Enables adding and parsing of multiple arguments in the context of a single request.
 parser = reqparse.RequestParser()
 
 
@@ -31,8 +35,8 @@ def _bucketlist(list_id):
     bucketlist = db.session.query(BucketList).filter_by(
         id=list_id, created_by=created_by).first()
     if not bucketlist:
+        # database result was required but none was found
         raise NoResultFound
-    print ('5')
     return bucketlist
 
 
@@ -112,7 +116,7 @@ class UserLogOut(Resource):
             Log a user out
         """
         logout_user()
-        return {'message': 'user successfully logged out.'}, 200
+        return {'message': 'Logged Out.'}, 200
 
 
 class BucketListNew(Resource):
@@ -126,7 +130,7 @@ class BucketListNew(Resource):
             Create a new bucketlist
         """
         parser.add_argument('list_name',
-                            help='This field cannot be left blank')
+                            help='This field must be filled')
         arg = parser.parse_args()
         if arg['list_name']:
             list_name = arg['list_name']
@@ -141,8 +145,7 @@ class BucketListNew(Resource):
             bucketlist = BucketList(list_name=list_name, created_by=created_by)
             db.session.add(bucketlist)
             db.session.commit()
-            return {"message": "Bucketlist created successfully.",
-                    "bucketlist": bucketlist.to_json()}, 201
+            return marshal(bucketlist, bucketlists), 201
 
     @auth.login_required
     def get(self):
@@ -162,22 +165,9 @@ class BucketListSingle(Resource):
         """
             Get single bucketlist
         """
-        # try:
-        #     bucketlist = _bucketlist(list_id)
-        #     specific = bucketlist.id
-        #     print (specific)
-        #     newbucketlist = db.session.query(BucketList).filter_by(
-        #         id=specific).first()
-        #     return newbucketlist
-        #     return {'bucketlist': newbucketlist.to_json()}, 200
-        # except NoResultFound:
-        #     return {'message': 'Bucketlist {} not found'.format(list_id)}, 404
         try:
             bucketlist = _bucketlist(list_id)
-            y = (bucketlist.list_name)
-            # single_bucketlist = bucketlist(id=y)
-            return {"message": "Bucketlist created successfully.",
-                    "bucketlist": y.to_json()}, 201
+            return marshal(bucketlist, bucketlists), 200
         except NoResultFound:
             return {'message': 'Bucketlist {} not found'.format(list_id)}, 404
 
@@ -196,10 +186,10 @@ class BucketListSingle(Resource):
                 return {'message': 'Invalid Entry'}
             db.session.add(bucketlist)
             db.session.commit()
-            return {'message': 'Bucketlist {} has been modified'
+            return {'message': 'Bucketlist {} has been modified.'
                                .format(list_id)}, 202
         except NoResultFound:
-            return {'message': 'Bucketlist {} has not been found'
+            return {'message': 'Bucketlist {} does not exist.'
                                .format(list_id)}, 404
 
     @auth.login_required
@@ -211,10 +201,10 @@ class BucketListSingle(Resource):
             bucketlist = _bucketlist(list_id)
             db.session.delete(bucketlist)
             db.session.commit()
-            return {'message': 'Bucketlist {}  deleted successfully'
+            return {'message': 'Bucketlist {}  deleted successfully.'
                                .format(list_id)}, 200
         except NoResultFound:
-            return {'message': 'Bucketlist {} not found'
+            return {'message': 'Bucketlist {} does not exist.'
                                .format(list_id)}, 404
 
 

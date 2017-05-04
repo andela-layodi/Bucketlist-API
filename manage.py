@@ -51,9 +51,9 @@ def drop_db():
 
 
 # endpoints
-api.add_resource(UserRegistration, '/api/v1/auth/register', endpoint="user_registration")
-api.add_resource(UserLogIn, '/api/v1/auth/login', endpoint="login")
-api.add_resource(UserLogOut, '/api/v1/auth/logout', endpoint="logout")
+api.add_resource(UserRegistration, '/auth/register', endpoint="user_registration")
+api.add_resource(UserLogIn, '/auth/login', endpoint="login")
+api.add_resource(UserLogOut, '/auth/logout', endpoint="logout")
 api.add_resource(BucketListNew, '/api/v1/bucketlists/', endpoint="newbucketlist")
 api.add_resource(BucketListAddItem, '/api/v1/bucketlists/<list_id>/items/',
                  endpoint='bucketlistitems')

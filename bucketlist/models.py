@@ -71,27 +71,27 @@ class BucketList(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     list_name = db.Column(db.String(255), unique=True, nullable=False)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    list_items = db.relationship('ListItems', backref='list', lazy='dynamic')
+    list_items = db.relationship('ListItems', backref="set", cascade="all", lazy="joined")
     date_created = db.Column(db.DateTime, default=db.func.now(), nullable=False)
     date_modified = db.Column(
         db.DateTime, default=db.func.now(), onupdate=db.func.now(), nullable=False)
 
-    def __init__(self, list_name, created_by):
-        self.list_name = list_name
-        self.created_by = created_by
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.list_name,
-            "items": [{item.to_json} for item in self.list_items],
-            "date_created": str(self.date_created),
-            "date_modified": str(self.date_modified),
-            "created_by": self.created_by
-        }
-
-    def __repr__(self):
-        return '<BucketList %r>' % self.list_name
+    # def __init__(self, list_name, created_by):
+    #     self.list_name = list_name
+    #     self.created_by = created_by
+    #
+    # def to_json(self):
+    #     return {
+    #         "id": self.id,
+    #         "name": self.list_name,
+    #         "items": [{item.to_json} for item in self.list_items],
+    #         "date_created": str(self.date_created),
+    #         "date_modified": str(self.date_modified),
+    #         "created_by": self.created_by
+    #     }
+    #
+    # def __repr__(self):
+    #     return '<BucketList %r>' % self.list_name
 
 
 class ListItems(db.Model):
@@ -105,19 +105,19 @@ class ListItems(db.Model):
         db.DateTime, default=db.func.now(), onupdate=db.func.now())
     done = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(
-            self, list_id, item_name):
-        self.list_id = list_id
-        self.item_name = item_name
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.item_name,
-            "date_created": str(self.date_created),
-            "date_modified": str(self.date_modified),
-            "done": self.done
-        }
-
-    def __repr__(self):
-        return '<ListItems %r>' % self.item_name
+    # def __init__(
+    #         self, list_id, item_name):
+    #     self.list_id = list_id
+    #     self.item_name = item_name
+    #
+    # def to_json(self):
+    #     return {
+    #         "id": self.id,
+    #         "name": self.item_name,
+    #         "date_created": str(self.date_created),
+    #         "date_modified": str(self.date_modified),
+    #         "done": self.done
+    #     }
+    #
+    # def __repr__(self):
+    #     return '<ListItems %r>' % self.item_name
