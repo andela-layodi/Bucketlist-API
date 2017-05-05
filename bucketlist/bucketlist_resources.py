@@ -1,4 +1,4 @@
-from flask import g
+from flask import g, request
 from flask_httpauth import HTTPTokenAuth
 from flask_restful import reqparse, Resource, marshal
 from sqlalchemy.orm.exc import NoResultFound
@@ -76,7 +76,19 @@ class BucketListNew(Resource):
         """
             List all the created bucketlists
         """
-        pass
+        q = request.args.get('q', None, type=str)
+
+        created_by = g.user
+        if created_by:
+            if q:
+                bucketlistget = BucketList.query.filter_by(
+                    created_by=created_by).filter(
+                        BucketList.list_name.ilike('%' + q + '%'))
+                return marshal(list(bucketlistget), bucketlists)
+            else:
+                bucketlistget = db.session.query(BucketList).filter_by(
+                    created_by=created_by).all()
+                return marshal(bucketlistget, bucketlists)
 
 
 class BucketListSingle(Resource):
