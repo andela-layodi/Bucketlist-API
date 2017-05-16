@@ -8,8 +8,8 @@ The building blocks used to come up with this system include:
 ## Setting Up/ Installation
 The following set of steps are necessary to facilitate running the application locally:
 * Create a directory for the project code
-      $ mkdir -p ~/buckety
-      $ cd ~/buckety
+      `$ mkdir -p ~/buckety`
+      `$ cd ~/buckety`
 
 * Create a virtual environment for the dependencies
       $ virtualenv --python=python3 buckety_venv
