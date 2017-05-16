@@ -11,41 +11,41 @@ The following set of steps are necessary to facilitate running the application l
 
          $ mkdir -p ~/buckety
 
-        `$ cd ~/buckety`
+        $ cd ~/buckety
 
 * Create a virtual environment for the dependencies
 
-        `$ virtualenv --python=python3 buckety_venv`
+        $ virtualenv --python=python3 buckety_venv
 
-        `$ source buckety_venv/bin/activate`
+        $ source buckety_venv/bin/activate
 
 * Clone the project code from the remote repository
 
-        `$ git clone https://github.com/andela-layodi/Bucketlist-API.git`
+        $ git clone https://github.com/andela-layodi/Bucketlist-API.git
 
 * Install the dependencies
 
-        `$ cd buckety`
+        $ cd buckety
 
-        `$ pip install -r requirements.txt`
+        $ pip install -r requirements.txt
 
 * Run database migrations
 
-        `$ python manage.py db init`
+        $ python manage.py db init
 
-        `$ python manage.py db migrate`
+        $ python manage.py db migrate
 
 * Manually create database tables by running:
 
-        `$ python manage.py create_db`
+        $ python manage.py create_db
 
 * To delete tables running:
 
-        `$ python manage.py drop_db`
+        $ python manage.py drop_db
 
 * Start the application by running:
 
-        `$ python manage.py runserver`
+        $ python manage.py runserver
 
 ## API
 The endpoints include:
