@@ -8,32 +8,40 @@ The building blocks used to come up with this system include:
 ## Setting Up/ Installation
 The following set of steps are necessary to facilitate running the application locally:
 * Create a directory for the project code
-      ```$ mkdir -p ~/buckety
-        $ cd ~/buckety```
+
+`$ mkdir -p ~/buckety`
+`$ cd ~/buckety`
 
 * Create a virtual environment for the dependencies
-      $ virtualenv --python=python3 buckety_venv
-      $ source buckety_venv/bin/activate
+
+`$ virtualenv --python=python3 buckety_venv`
+`$ source buckety_venv/bin/activate`
 
 * Clone the project code from the remote repository
-      $ git clone https://github.com/andela-layodi/Bucketlist-API.git
+
+`$ git clone https://github.com/andela-layodi/Bucketlist-API.git`
 
 * Install the dependencies
-      $ cd buckety
-      $ pip install -r requirements.txt
+
+`$ cd buckety`
+`$ pip install -r requirements.txt`
 
 * Run database migrations
-        $ python manage.py db init
-        $ python manage.py db migrate
+
+`$ python manage.py db init`
+`$ python manage.py db migrate`
 
 * Manually create database tables by running:
-        $ python manage.py create_db
 
-  and to delete tables running:
-        $ python manage.py drop_db
+`$ python manage.py create_db`
+
+* To delete tables running:
+
+`$ python manage.py drop_db`
 
 * Start the application by running:
-        $ python manage.py runserver
+
+`$ python manage.py runserver`
 
 ## API
 The endpoints include:
