@@ -59,7 +59,7 @@ class UserLogIn(Resource):
             if user.verify_password(password_hash):
                 auth_token = user.generate_auth_token(user.id)
                 response = {
-                    'message': 'You have been logged in successfully',
+                    # 'message': 'You have been logged in successfully',
                     'token': auth_token.decode()}, 201
                 return response
 

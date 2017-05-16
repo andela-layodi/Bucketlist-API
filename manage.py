@@ -1,3 +1,4 @@
+from flask_cors import CORS
 from flask_login import LoginManager
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Shell
@@ -37,19 +38,22 @@ def drop_db():
 
 # endpoints
 api.add_resource(
-    UserRegistration, '/auth/register', endpoint="user_registration")
-api.add_resource(UserLogIn, '/auth/login', endpoint="login")
-api.add_resource(UserLogOut, '/auth/logout', endpoint="logout")
+    UserRegistration, '/api/v1/auth/register', endpoint="user_registration")
+api.add_resource(UserLogIn, '/api/v1/auth/login', endpoint="login")
+api.add_resource(UserLogOut, '/api/v1/auth/logout', endpoint="logout")
 api.add_resource(
     BucketListNew, '/api/v1/bucketlists/', endpoint="newbucketlist")
-api.add_resource(BucketListAddItem, '/api/v1/bucketlists/<list_id>/items/',
+api.add_resource(BucketListAddItem, '/api/v1/bucketlists/<int:id>/items/',
                  endpoint='add_bucketlistitems')
 api.add_resource(
-    BucketListSingle, '/api/v1/bucketlists/<list_id>/',
+    BucketListSingle, '/api/v1/bucketlists/<int:id>',
+    '/api/v1/bucketlists/<int:id>/',
     endpoint='single_bucketlist')
 api.add_resource(
-    BucketListEditItem, '/api/v1/bucketlists/<list_id>/items/<item_id>/',
+    BucketListEditItem, '/api/v1/bucketlists/<int:id>/items/<item_id>/',
     endpoint='update_item')
+
+CORS(app)
 
 
 if __name__ == '__main__':
