@@ -1,10 +1,11 @@
 import datetime
 
 from flask_login import UserMixin
+from flask import current_app as app
 import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from . import app, db
+from api import db
 
 
 class User(db.Model, UserMixin):
@@ -45,7 +46,7 @@ class User(db.Model, UserMixin):
                 payload,
                 app.config.get('SECRET_KEY'),
                 algorithm='HS256'
-            )
+            ).decode()
         except Exception as e:
             return e
 

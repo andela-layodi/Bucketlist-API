@@ -12,6 +12,7 @@ class BaseConfig:
     TESTING = False
     CSRF_ENABLED = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # SERVER_NAME = 'http://127.0.0.1:5000/'
 
 
 class DevelopmentConfig(BaseConfig):
@@ -34,3 +35,10 @@ class ProductionConfig(BaseConfig):
     SECRET_KEY = 'my_precious'
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = 'postgresql:///example'
+
+
+config_by_name = dict(
+    dev=DevelopmentConfig,
+    test=TestingConfig,
+    prod=ProductionConfig
+)

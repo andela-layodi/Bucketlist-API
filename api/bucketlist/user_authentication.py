@@ -1,10 +1,13 @@
 from flask_login import logout_user
-from flask_restful import reqparse, Resource
+from flask_restful import reqparse, Resource, Api
+from flask import request, jsonify, current_app as app
 
-from . import db
+from api import db
 from .models import User
+from . import bucketlists
 
 parser = reqparse.RequestParser()
+api = Api(bucketlists)
 
 
 class UserRegistration(Resource):
@@ -16,6 +19,7 @@ class UserRegistration(Resource):
         """
             Register a user
         """
+        # print("\nRequest for registration: ", request.__dict__)
         parser.add_argument('username')
         parser.add_argument('password')
 
@@ -60,7 +64,7 @@ class UserLogIn(Resource):
                 auth_token = user.generate_auth_token(user.id)
                 response = {
                     # 'message': 'You have been logged in successfully',
-                    'token': auth_token.decode()}, 201
+                    'token': auth_token}, 201
                 return response
 
             # if password not verified
@@ -80,3 +84,11 @@ class UserLogOut(Resource):
         """
         logout_user()
         return {'message': 'Logged Out.'}, 200
+
+
+# endpoints
+api.add_resource(
+    UserRegistration, '/auth/register', '/auth/register/',
+    endpoint="user_registration")
+api.add_resource(UserLogIn, '/auth/login', '/auth/login/', endpoint="login")
+api.add_resource(UserLogOut, '/auth/logout', endpoint="logout")

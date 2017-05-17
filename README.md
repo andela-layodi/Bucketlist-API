@@ -9,7 +9,7 @@ The building blocks used to come up with this system include:
 The following set of steps are necessary to facilitate running the application locally:
 * Create a directory for the project code
 
-         $ mkdir -p ~/buckety
+        $ mkdir -p ~/buckety
 
         $ cd ~/buckety
 
