@@ -1,15 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_restful import Api
 
 from .config import config_by_name
 
-# app = Flask(__name__)
-#
-# app.config.from_object(DevelopmentConfig)
-#
-
-#
 db = SQLAlchemy()
 
 

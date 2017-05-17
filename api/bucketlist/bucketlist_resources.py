@@ -1,4 +1,4 @@
-from flask import g, request, url_for
+from flask import g, request, jsonify
 from flask_httpauth import HTTPTokenAuth
 from flask_restful import reqparse, Resource, marshal, Api
 from sqlalchemy.orm.exc import NoResultFound
@@ -6,7 +6,6 @@ from sqlalchemy.orm.exc import NoResultFound
 from api import db
 from .models import User, BucketList, ListItems
 from .serializer import bucketlists, bucketlistitems
-
 from . import bucketlists as bucketlists_blueprint
 
 auth = HTTPTokenAuth()
@@ -32,7 +31,6 @@ def _bucketlist(id):
     bucketlist = db.session.query(BucketList).filter_by(
         id=id, created_by=created_by).first()
     if not bucketlist:
-        # database result was required but none was found
         raise NoResultFound
     return bucketlist
 
@@ -44,31 +42,6 @@ def _bucketlist_item(item_id, id):
     if not bucketlistitem:
         raise NoResultFound
     return bucketlistitem
-
-#
-# def paginate(data, page, per_page):
-#     if not data:
-#         return {'Error': 'No records available'}, 400
-#
-#     if data.has_prev:
-#         previous_url = ('http://' + request.host + url_for
-#                         (request.endpoint) + '?page=' + str(page - 1) +
-#                         '&per_page=' + str(per_page))
-#     else:
-#         previous_url = 'Null'
-#
-#     if data.has_next:
-#         next_url = ('http://' + request.host + url_for
-#                     (request.endpoint) + '?page=' + str(page + 1) +
-#                     '&per_page=' + str(per_page))
-#     else:
-#         next_url = 'Null'
-#
-#     return {'meta': {'previous_page': previous_url,
-#                      'next_page': next_url,
-#                      'total_pages': data.pages},
-#             'bucketlist': marshal(data.items, bucketlists)
-#             }, 200
 
 
 class BucketListNew(Resource):
@@ -87,7 +60,7 @@ class BucketListNew(Resource):
         if arg['list_name']:
             list_name = arg['list_name']
         else:
-            return {'message': 'Invalid entry.'}
+            return {'message': 'Invalid entry.'}, 400
         created_by = g.user
         existingbucketlist = db.session.query(BucketList).filter_by(
             list_name=list_name, created_by=created_by).first()
@@ -112,48 +85,27 @@ class BucketListNew(Resource):
         word = request.args.get('q', None, type=str)
 
         created_by = g.user
-        if created_by:
-            print("\n\ncreated by!")
-            if word:
-                print("\n\nword!")
-                bucketlistget = BucketList.query.filter_by(
-                    created_by=created_by).filter(
-                        BucketList.list_name.ilike('%' + word + '%')).paginate(page, per_page, False)
-                if list(bucketlistget) == []:
-                    return {'message': 'Record containing {} cannot be found'.format(word)}, 404
-                else:
+        bucketlistget = BucketList.query.filter_by(
+            created_by=created_by)
+        if word:
+            bucketlistget = bucketlistget.filter(
+                BucketList.list_name.ilike('%' + word + '%'))
+            if list(bucketlistget) == []:
+                return {"message":
+                        "Record containing '{}' cannot be found".format(
+                            word)}, 404
+        bucketlistget = bucketlistget.paginate(page, per_page, False)
 
-                    return marshal(list(bucketlistget), bucketlists)
-
-            else:
-                print("\n\nnot word!")
-                bucketlistget = db.session.query(BucketList).filter_by(
-                    created_by=created_by).paginate(page, per_page, False).items
-                print("\n\nPaginated!: ", bucketlistget, "\n")
-                return marshal(bucketlistget, bucketlists)
-
-            if bucketlistget.has_prev:
-                previous_url = ('http://' + request.host + url_for
-                                (request.endpoint) + '?page=' + str(page - 1) +
-                                '&per_page=' + str(per_page) +
-                                '&q={}'.format(word))
-            else:
-                previous_url = 'Null'
-
-            if bucketlistget.has_next:
-                next_url = ('http://' + request.host + url_for
-                            (request.endpoint) + '?page=' +
-                            str(page + 1) + '&per_page=' + str(per_page) +
-                            '&q={}'.format(word))
-            else:
-                next_url = 'Null'
-
-            return {'meta': {'previous_page': previous_url,
-                             'next_page': next_url,
-                             'total_pages': bucketlistget.pages},
-                    'bucketlist':
-                        marshal(list(bucketlistget), bucketlists)
-                    }, 200
+        data = {
+            "has_prev": bucketlistget.has_prev,
+            "has_next": bucketlistget.has_next,
+            "current_page": bucketlistget.page,
+            "next_page": bucketlistget.next_num,
+            "previous_page": bucketlistget.prev_num,
+            "total": bucketlistget.total,
+            "bucketlists": marshal(bucketlistget.items, bucketlists)
+        }
+        return jsonify(data)
 
 
 class BucketListSingle(Resource):
@@ -180,12 +132,11 @@ class BucketListSingle(Resource):
         try:
             bucketlist = _bucketlist(id)
             parser.add_argument('list_name')
-            print("\n\nParser from put: ", parser.__dict__['args'][0].__dict__)
             arg = parser.parse_args()
             if arg['list_name']:
                 bucketlist.list_name = arg['list_name']
             else:
-                return {'message': 'Invalid Entry'}
+                return {'message': 'Invalid Entry'}, 400
             db.session.add(bucketlist)
             db.session.commit()
             return {'message': 'Bucketlist {} has been modified.'
@@ -222,14 +173,12 @@ class BucketListAddItem(Resource):
         """
         try:
             bucketlist = _bucketlist(id)
-            print (bucketlist)
-            # return bucketlist.id
             parser.add_argument('item_name')
             arg = parser.parse_args()
             if arg['item_name']:
                 item = arg['item_name']
             else:
-                return {'message': 'Invalid value passed.'}
+                return {'message': 'Invalid value passed.'}, 400
             bucketlistitem = ListItems(bucketlist.id,
                                        item_name=item)
             db.session.add(bucketlistitem)
@@ -270,7 +219,7 @@ class BucketListEditItem(Resource):
             if arg['done']:
                 bucketlistitem.done = arg['done']
             if not arg['item_name'] and not arg['done']:
-                return {'message': 'Invalid value passed.'}
+                return {'message': 'Invalid value passed.'}, 400
             db.session.add(bucketlistitem)
             db.session.commit()
             return {'message': 'Bucketlistitem {}  has been modified'
@@ -300,11 +249,11 @@ class BucketListEditItem(Resource):
 api.add_resource(
     BucketListNew, '/bucketlists/', endpoint="bucketlist_ops")
 api.add_resource(BucketListAddItem, '/bucketlists/<int:id>/items/',
-                 endpoint='add_bucketlistitems')
+                 endpoint='listitem_ops')
 api.add_resource(
     BucketListSingle, '/bucketlists/<int:id>',
     '/bucketlists/<int:id>/',
-    endpoint='single_bucketlist')
+    endpoint='specific_bucketlist')
 api.add_resource(
     BucketListEditItem, '/bucketlists/<int:id>/items/<item_id>/',
     endpoint='update_item')

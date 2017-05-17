@@ -4,7 +4,6 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
 from api import create_app, db
-# from api.bucketlist.models import User
 
 app = create_app('dev')
 migrate = Migrate(app, db)
@@ -14,13 +13,6 @@ manager.add_command('db', MigrateCommand)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-#
-# def make_shell_context():
-#     return dict(app=app, db=db, User=User)
-#
-#
-# manager.add_command('shell', Shell(make_context=make_shell_context))
 
 
 @manager.command

@@ -1,6 +1,5 @@
 from flask_login import logout_user
 from flask_restful import reqparse, Resource, Api
-from flask import request, jsonify, current_app as app
 
 from api import db
 from .models import User
@@ -19,7 +18,6 @@ class UserRegistration(Resource):
         """
             Register a user
         """
-        # print("\nRequest for registration: ", request.__dict__)
         parser.add_argument('username')
         parser.add_argument('password')
 
@@ -63,11 +61,9 @@ class UserLogIn(Resource):
             if user.verify_password(password_hash):
                 auth_token = user.generate_auth_token(user.id)
                 response = {
-                    # 'message': 'You have been logged in successfully',
                     'token': auth_token}, 201
                 return response
 
-            # if password not verified
             return {'message': 'Incorrect password.'}, 400
         return {
             'message': 'Both name and password are required to log in.'}, 400
